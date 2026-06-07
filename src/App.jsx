@@ -14,7 +14,7 @@ const App = () => {
                   <Hero />
                   <TechnicalProficiency />
                   <AboutMe />
-                  <MyPorfolio />
+                  <MyProjects />
                   <ContactMe />
                   <Footer />
             </div>
