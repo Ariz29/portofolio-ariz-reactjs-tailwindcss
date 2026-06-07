@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"; 
 import { motion, AnimatePresence } from "framer-motion"; 
-import PROFILE_PIC from "../assets/images/profile-pic.jpg"
-import { STATS } from "../utils/data"
+import PROFILE_PIC from "../assets/images/profile-pic.jpg";
+import { STATS } from "../utils/data";
 
-// --- KOMPONEN KUSTOM: EFEK TEKS DEKRIPSI HACKER (DURASI 0.5 DETIK) ---
+// --- KOMPONEN KUSTOM: EFEK TEKS DEKRIPSI HACKER (OPTIMAL DI HP & LAPTOP) ---
 const HackerText = ({ text, className, delay = 0 }) => {
   const [displayText, setDisplayText] = useState("");
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*_+=";
@@ -14,9 +14,8 @@ const HackerText = ({ text, className, delay = 0 }) => {
     let interval = null;
 
     const startEffect = () => {
-      const stepSpeed = 25; 
-      const totalSteps = 500 / stepSpeed; 
-      const increment = text.length / totalSteps;
+      // Menghitung kecepatan interval agar pas selesai dalam durasi ~500ms
+      const stepSpeed = Math.max(10, Math.floor(500 / text.length)); 
 
       interval = setInterval(() => {
         if (!isMounted) return;
@@ -24,8 +23,10 @@ const HackerText = ({ text, className, delay = 0 }) => {
         const scrambled = text
           .split("")
           .map((letter, index) => {
+            // Karakter spasi dan tanda baca tidak diacak agar tetap rapi di layar HP
             if (letter === " " || letter === "," || letter === ".") return letter;
             
+            // Jika indeks sudah terlewati oleh iterasi bulat, tampilkan huruf asli
             if (index < iteration) {
               return text[index];
             }
@@ -36,11 +37,13 @@ const HackerText = ({ text, className, delay = 0 }) => {
 
         setDisplayText(scrambled);
 
+        // Berhenti total jika iterasi bulat sudah mencapai panjang teks asli
         if (iteration >= text.length) {
           clearInterval(interval);
+          setDisplayText(text); // Memastikan teks akhir 100% akurat tanpa sisa acak
         }
 
-        iteration += increment; 
+        iteration += 1; // Menggunakan angka bulat agar ringan dan pasti tereksekusi di HP
       }, stepSpeed);
     };
 
@@ -56,7 +59,7 @@ const HackerText = ({ text, className, delay = 0 }) => {
   return <span className={className}>{displayText || text}</span>;
 };
 
-
+// --- KOMPONEN UTAMA HERO ---
 const Hero = () => {
   const roles = ["Data Analyst Enthusiast", "Full Stack Developer", "Machine Learning Enthusiast"];
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
@@ -97,7 +100,6 @@ const Hero = () => {
 
   return (
     <section id="hero" className="container mx-auto px-6 lg:px-8 pt-12 md:pt-16 pb-12 max-w-5xl bg-transparent">
-      {/* PERBAIKAN: Komentar di dalam return sekarang menggunakan format JSX {/* ... */} 
       <motion.div 
         className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center justify-between"
         variants={containerVariants}
